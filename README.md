@@ -79,8 +79,6 @@ Example Output
 [-] 'Icn_+_Contact_highlighted.png' file not signed.
 [-] 'Info.plist' file not signed.
 [-] 'ResourceRules.plist' file not signed.
-[-] '_CodeSignature' file not signed.
-[-] 'CodeResources' file not signed.
 [-] 'en.lproj' file not signed.
 [-] 'InfoPlist.strings' file not signed.
 [-] 'MainWindow.nib' file not signed.
