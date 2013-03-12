@@ -1,6 +1,6 @@
 iCSFV
 =====
-
+```Text
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
          _  ____ ____  _______     __
         (_)/ ___/ ___||  ___\ \   / /
@@ -12,9 +12,9 @@ iOS Application Code Signature File Validator
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
-Written by: Anestis Bechtsoudis @anestisb
+     Written by: Anestis Bechtsoudis @anestisb
 Copyright (C) 2013 Anestis Bechtsoudis ( Census, Inc. )
-
+```
 
 License
 =======
@@ -30,6 +30,7 @@ Requirements
 
 Usage
 =====
+```
 Usage: iCSFV.pl [options]
 
 Options:
@@ -41,22 +42,29 @@ Options:
   -d            Enable debug output (verbose info + IPA payload preserve)
 
   -h            Display help and exit
-
+```
 
 Examples
 ========
 1. Check for unprotected files & directories (recursively) located into "test.ipa"
+```
 ./iCSFV.pl -i iOS/Binaries/test.ipa
+```
 
 2. Check for unprotected files only in 1st level (depth 0) located into "test.ipa"
+```
 ./iCSFV.pl -f -i iOS/Binaries/test.ipa
+```
 
 3. Make the same checks with (2.) in debug mode (verbose info + IPA payload preserve)
+```
 ./iCSFV.pl -d -f -i /iOS/Binaries/test.ipa 
+```
 
 
 Example Output
 ==============
+```text
 ./iCSFV.pl -i iOS/Binaries/test.ipa
 
 	iCSFV 0.1.0 - iOS Application Code Signature File Validator
@@ -80,3 +88,4 @@ Example Output
 
 [!] Changes in resources (png, jpg, nib, etc) that are not signed, does not
     invalidate the signature. Check their use cases and proceed accordingly.
+```
