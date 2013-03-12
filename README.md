@@ -75,8 +75,7 @@ Example Output
 [*] Validating 'Test' protected resources.
 [*] Validator wil check both for files & dirs recursively.
 [-] 'Test.plist' file not signed.
-[-] 'Icn_+_Contact.png' file not signed.
-[-] 'Icn_+_Contact_highlighted.png' file not signed.
+[-] 'Icn_+_Sample.png' file not signed.
 [-] 'Info.plist' file not signed.
 [-] 'ResourceRules.plist' file not signed.
 [-] 'en.lproj' file not signed.
