@@ -57,7 +57,7 @@ my $file_type;
 # Program description properties
 $iCSFV{author} = 'Anestis Bechtsoudis { Census, Inc. }';
 $iCSFV{desc} = "iOS Application Code Signature File Validator";
-$iCSFV{ver} = "0.1.0";
+$iCSFV{ver} = "0.1.1";
 $iCSFV{email} = 'anestis@census.gr';
 $iCSFV{twitter} = '@anestisb';
 $iCSFV{web} = 'http://census.gr';
@@ -135,10 +135,10 @@ if (!-e $app_path) {
 
 # Check for only for one-level files validation
 if (defined($args{f})) {
-    $find_in_system = "find $app_path/* -type f -maxdepth 0 -exec basename {} \\;";
+    $find_in_system = "find $app_path/* -type f -maxdepth 0";
     print BOLD,BLUE,"[*]",RESET," Validator will check only files in 1st level.\n";
 } else {
-    $find_in_system = "find $app_path/* -exec basename {} \\;";
+    $find_in_system = "find $app_path/*";
     print BOLD,BLUE,"[*]",RESET," Validator will check both for files & dirs recursively.\n";
 }
 
@@ -161,11 +161,13 @@ if($debug) {
 # List all files in application directory
 @files_array = `$find_in_system`;
 
+# Remove head path, leaving only the relative part
+@files_array = map { $_ =~ s/$app_path\///g; $_ } @files_array;
+
 # Exclude files
 # - Codesignature files and directory
 # - Application binary (different code sign procedure)
-push(@ex_array, "_CodeSignature");
-push(@ex_array, "CodeResources");
+push(@ex_array, "_CodeSignature/CodeResources");
 push(@ex_array, "$app_name");
 # Push any files here that you might want to exclude
 # push(@ex_array, "<myFile>");
@@ -181,23 +183,15 @@ foreach $file(@files_array)
     if ( grep ( /^$file$/, @xml_array ) ) {
 	# Print signed files only in debug mode
 	if($debug) {
-	    print BOLD,GREEN,"[+]",RESET;
-	    if(`find $app_path -type d -iname "$file"` ne '') {
-		print " [dir ] ";
-	    } else {
-		print " [file] ";
+	    if(-f "$app_path/$file") {
+		print BOLD,GREEN,"[+]",RESET," '$file' signed.\n";
 	    }
-	    print " '$file' signed.\n";
 	}
     } elsif ( !grep ( /^$file$/, @ex_array ) ) {
 	# Print not signed files
-	print BOLD,RED,"[-]",RESET;
-	if(`find $app_path -type d -iname "$file"` ne '') {
-            print " [dir ] ";
-        } else {
-            print " [file] ";
+	if(-f "$app_path/$file") {
+            print BOLD,RED,"[-]",RESET," '$file' not signed.\n";
         }
-	print " '$file' not signed.\n";
     }
 }
 
