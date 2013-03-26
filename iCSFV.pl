@@ -57,7 +57,7 @@ my $file_type;
 # Program description properties
 $iCSFV{author} = 'Anestis Bechtsoudis { Census, Inc. }';
 $iCSFV{desc} = "iOS Application Code Signature File Validator";
-$iCSFV{ver} = "0.1.1";
+$iCSFV{ver} = "0.1.2";
 $iCSFV{email} = 'anestis@census.gr';
 $iCSFV{twitter} = '@anestisb';
 $iCSFV{web} = 'http://census.gr';
@@ -165,10 +165,12 @@ if($debug) {
 @files_array = map { $_ =~ s/$app_path\///g; $_ } @files_array;
 
 # Exclude files
-# - Codesignature files and directory
+# - Codesignature files
 # - Application binary (different code sign procedure)
+# - Resources plist
 push(@ex_array, "_CodeSignature/CodeResources");
 push(@ex_array, "$app_name");
+push(@ex_array,"ResourceRules.plist");
 # Push any files here that you might want to exclude
 # push(@ex_array, "<myFile>");
 
