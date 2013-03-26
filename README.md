@@ -67,7 +67,7 @@ Example Output
 ```text
 ./iCSFV.pl -i iOS/Binaries/test.ipa
 
-	iCSFV 0.1.1 - iOS Application Code Signature File Validator
+	iCSFV 0.1.2 - iOS Application Code Signature File Validator
 	Copyright (C) 2013 Anestis Bechtsoudis { Census, Inc. }
 	{ @anestisb | anestis@census.gr | http://census.gr }
 
@@ -77,7 +77,6 @@ Example Output
 [-] 'extra/Test.plist' file not signed.
 [-] 'Icn_+_Sample.png' file not signed.
 [-] 'Info.plist' file not signed.
-[-] 'ResourceRules.plist' file not signed.
 [-] 'InfoPlist.strings' file not signed.
 [-] 'MainWindow.nib' file not signed.
 [*] Deleting '/tmp/qaHXC'. Use debug mode (-d) to keep it.
