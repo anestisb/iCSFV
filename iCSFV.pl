@@ -57,7 +57,7 @@ my $file_type;
 # Program description properties
 $iCSFV{author} = 'Anestis Bechtsoudis { Census, Inc. }';
 $iCSFV{desc} = "iOS Application Code Signature File Validator";
-$iCSFV{ver} = "0.1.2";
+$iCSFV{ver} = "0.1.3";
 $iCSFV{email} = 'anestis@census.gr';
 $iCSFV{twitter} = '@anestisb';
 $iCSFV{web} = 'http://census.gr';
@@ -132,6 +132,9 @@ if (!-e $app_path) {
     print BOLD,RED,"[-]",RESET," XML Codesignature file does not exist.\n";
     exit;
 }
+
+# Escape possible spaces in path
+$app_path =~ s/ /\\ /g;
 
 # Check for only for one-level files validation
 if (defined($args{f})) {
