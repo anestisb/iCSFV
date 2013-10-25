@@ -29,20 +29,23 @@ use if $^O eq "MSWin32", "Win32::Console::ANSI";
 
 ## Variables ##
 # Global variables
-my %iCSFV;		# Script description properties
-my %args;		# Command line parsing arguments
-my $debug = 0;		# Debug mode disabled by default
-my $ipa_path = "";	# Application (.ipa) path
-my $app_path = "";	# Unzipped application (.app) path
-my $app_name = "";	# Application name
-my $cr_path;		# CodeResources path
-my $tmp_base = "/tmp";	# Base temporary directory to operate
-my $tmp_dir;		# Temp directory to operate
+my %iCSFV;              # Script description properties
+my %args;               # Command line parsing arguments
+my $debug = 0;          # Debug mode disabled by default
+my $ipa_path = "";      # Application (.ipa) path
+my $app_path = "";      # Unzipped application (.app) path
+my $app_name = "";      # Application name
+my $cr_path;            # CodeResources path
+my $tmp_base = "/tmp";  # Base temporary directory to operate
+my $tmp_dir;            # Temp directory to operate
 my @files_array;        # Array with filenames retrieved from app directory
-my @ex_array;		# Files exclude array
+my @ex_array;           # Files exclude array
 
 # System commands
 my $unzip = "/usr/bin/unzip";
+my $security = "/usr/bin/security";
+my $openssl = "/opt/local/bin/openssl";
+my $codesign = "/usr/bin/codesign";
 
 # XML help variables
 my $xml;		# XML object
@@ -57,18 +60,17 @@ my $file_type;
 # Program description properties
 $iCSFV{author} = 'Anestis Bechtsoudis { Census, Inc. }';
 $iCSFV{desc} = "iOS Application Code Signature File Validator";
-$iCSFV{ver} = "0.1.3";
+$iCSFV{ver} = "0.1.4";
 $iCSFV{email} = 'anestis@census.gr';
 $iCSFV{twitter} = '@anestisb';
 $iCSFV{web} = 'http://census.gr';
 ## End of variables ##
 
-
 # Print logo
 print_logo();
 
 # Parse command arguments
-getopts("i:fdh", \%args) or die BOLD,RED,"[-]",RESET," Problem with the supplied arguments.\n";
+getopts("i:fmedh", \%args) or die BOLD,RED,"[-]",RESET," Problem with the supplied arguments.\n";
 
 # Check for invalid arguments
 if(defined $ARGV[0]) {
@@ -200,6 +202,16 @@ foreach $file(@files_array)
     }
 }
 
+# Print provision profile data
+if (defined($args{m})) {
+    print_provisions();
+}
+
+# Print entitlements data
+if (defined($args{e})) {
+    print_entitlements();
+}
+
 # Preserve unzipped data in debug mode
 if($debug) {
     print BOLD,BLUE,"[*]",RESET," '$app_name' is available at '$tmp_dir' for further investigation.\n";
@@ -217,6 +229,65 @@ exit;
 #################################################################################
 # Help functions
 #################################################################################
+
+#################################################################################
+# Print embedded provision profile details
+sub print_provisions
+{
+    # Provision profile file
+    my $prov_file = $app_path."/embedded.mobileprovision";
+
+    # Place holder for output data
+    my $prov_file_data;
+
+    # Check for security tool
+    if(!-e $security) {
+        print BOLD,RED,"[-]",RESET," 'security' utility not found in system. Checking openssl\n";
+        
+        # Check for openssl
+        if(!-e $openssl) {
+            print BOLD,RED,"[-]",RESET," 'openssl' utility not found in system.\n";
+	    print BOLD,RED,"[-]",RESET," Provision profile dump aborted!\n";
+            return;
+        }
+        else {
+            $prov_file_data = `openssl asn1parse -inform DEM -in $prov_file -strparse 54`;
+        }
+    }
+    else {
+        $prov_file_data = `$security cms -D -i $prov_file`;
+    }
+
+    print BOLD,BLUE,"[*]",RESET," Provision profile data:\n";
+    print MAGENTA,$prov_file_data,RESET,"\n";
+}
+
+#################################################################################
+# Print entitlements data
+sub print_entitlements
+{
+    if(!-e $codesign) {
+        print BOLD,RED,"[-]",RESET," 'codesign' utility not found in system.\n";
+        print BOLD,RED,"[-]",RESET," Entitlements dump aborted!\n";
+        return;
+    }
+
+    # Dump entitlements
+    my $entitl_data = `$codesign -d --entitlements - $app_path 2>&1`;
+    
+    # Beautify data
+    $entitl_data =~ s/^(.*\n){3}//;
+
+    print BOLD,BLUE,"[*]",RESET," Entitlements data:\n";
+    print MAGENTA,$entitl_data,RESET,"\n";
+
+    
+    # Check for 'keychain-access-groups'
+    if(index($entitl_data, "keychain-access-groups") == -1 )  {
+        print BOLD,RED,"[-]",RESET," WARNING! : Entitlements output does not contain".
+              " a 'keychain-access-groups'\n";
+    }
+}
 
 #################################################################################
 # Print logo
@@ -249,12 +320,11 @@ Usage: iCSFV.pl [options]
 
 Options:
   -i            Application *.ipa file
-
-  -f		Check application path only for files in 1st level
+  -f            Check application path only for files in 1st level
                     (Default: recursive check for both files and directories)
-
+  -m            Print mobile provision profile data
+  -e            Print entitlements data
   -d            Enable debug output (verbose info + IPA payload preserve)
-
   -h            Display help and exit
 );
 

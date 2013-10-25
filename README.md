@@ -26,6 +26,9 @@ Requirements
 * Perl
 * XML::LibXML::Simple library
 * Unzip command line tool
+* security command line tool
+* openssl command line tool (as an alternative to security tool)
+* codesign command line tool
 
 
 Usage
@@ -35,12 +38,11 @@ Usage: iCSFV.pl [options]
 
 Options:
   -i            Application *.ipa file
-
-  -f		Check application path only for files in 1st level
+  -f            Check application path only for files in 1st level
                     (Default: recursive check for both files and directories)
-
+  -m            Print mobile provision profile data
+  -e            Print entitlements data
   -d            Enable debug output (verbose info + IPA payload preserve)
-
   -h            Display help and exit
 ```
 
