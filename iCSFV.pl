@@ -26,6 +26,7 @@ use File::Basename;
 use Getopt::Std;
 use Term::ANSIColor qw(:constants);
 use if $^O eq "MSWin32", "Win32::Console::ANSI";
+use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
 
 ## Variables ##
 # Global variables
@@ -60,7 +61,7 @@ my $file_type;
 # Program description properties
 $iCSFV{author} = 'Anestis Bechtsoudis { Census, Inc. }';
 $iCSFV{desc} = "iOS Application Code Signature File Validator";
-$iCSFV{ver} = "0.1.4";
+$iCSFV{ver} = "0.1.5";
 $iCSFV{email} = 'anestis@census.gr';
 $iCSFV{twitter} = '@anestisb';
 $iCSFV{web} = 'http://census.gr';
@@ -106,8 +107,8 @@ if (!-e $ipa_path) {
 }
 
 # Validate IPA filetype
-$file_type = `file $ipa_path`;
-if(index($file_type, 'Zip archive data') == -1) {
+my $zip = Archive::Zip->new();
+unless ( $zip->read( $ipa_path ) == AZ_OK ) {
     print BOLD,RED,"[-]",RESET," Provided input is not a valid IPA file.\n";
     exit;
 }
@@ -187,7 +188,7 @@ foreach $file(@files_array)
     chomp($file);
 
     # Check string value against XML array
-    if ( grep ( /^$file$/, @xml_array ) ) {
+    if ( grep ( /^\Q$file\E$/, @xml_array ) ) {
 	# Print signed files only in debug mode
 	if($debug) {
 	    if(-f "$app_path/$file") {
@@ -294,11 +295,11 @@ sub print_entitlements
 sub print_logo
 {
     # Check if terminal for colored output
-    if(-t STDOUT) {
+    if( -t STDOUT) {
         print "\n",BLUE,BOLD,"\tiCSFV $iCSFV{ver}",RESET;
         print BLUE," - $iCSFV{desc}\n";
-        print GREEN,"\tCopyright (C) 2013 ",RESET,GREEN,BOLD,"$iCSFV{author}\n",RESET;
-        print GREEN,"\t{ ",YELLOW,"$iCSFV{twitter} ",GREEN,"|",YELLOW," $iCSFV{email} ";
+        print GREEN,"\tCopyright (C) 2013-2014 ",RESET,GREEN,BOLD,"$iCSFV{author}\n",RESET;
+        print GREEN,"\t    { ",YELLOW,"$iCSFV{twitter} ",GREEN,"|",YELLOW," $iCSFV{email} ";
         print GREEN,"|",YELLOW," $iCSFV{web}",GREEN," }\n\n",RESET;
 
         # Flush output buffer
@@ -306,8 +307,8 @@ sub print_logo
     }
     else {
         print "\n\tiCSFV $iCSFV{ver} - $iCSFV{desc}\n";
-        print "\tCopyright (C) 2013 $iCSFV{author}\n";
-        print "\t{ $iCSFV{twitter} | $iCSFV{email} | $iCSFV{web} }\n\n";
+        print "\tCopyright (C) 2013-2014 $iCSFV{author}\n";
+        print "\t    { $iCSFV{twitter} | $iCSFV{email} | $iCSFV{web} }\n\n";
     }
 }
 

@@ -12,8 +12,8 @@ iOS Application Code Signature File Validator
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
-     Written by: Anestis Bechtsoudis @anestisb
-Copyright (C) 2013 Anestis Bechtsoudis ( Census, Inc. )
+       Written by: Anestis Bechtsoudis @anestisb
+Copyright (C) 2013-2014 Anestis Bechtsoudis ( Census, Inc. )
 ```
 
 License
